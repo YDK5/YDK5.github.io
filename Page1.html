@@ -6,16 +6,164 @@
   </head>
   <body>
     <p style="
-      text-align=right;
+      text-align:right;
       color:#777;
       font-size:14px;
       margin:10px 10px 0 0;
       ">
       作成日：2025/12/06
     </p>
-    <h1>Webサイトの作成方法</h1>
+    <a href="index.html" style="
+    text-align:left;
+    font-size:20px;
+    color:hsla(196, 71%, 39%, 0.868);
+    margin:10px 10px 10px 10px;
+    ">統合ページ</a>
+    <h1>ファイル圧縮方法まとめ</h1>
     <p>以下に、Webサイトの作成手順について解説します。</p>
-    <h2>Githubアカウントの作成</h2>
-    <p>Webサイトを作成する方法として、Githubから作成する方法を選択しました。</p>
+    <ul>
+      <li><a href="#list1">ファイル種類の置換方法</a></li>
+      <li><a href="#list2">pdfファイルの圧縮方法</a></li>
+    </ul>
+    <h2 id="#list1">ファイル種類の置換方法</h2>
+    <h2 id="#list2">pdfファイルの圧縮方法</h2>
+    <p>pdf形式であれば,「powershell」にて次のコードを実行することで圧縮することができる。</p>
+    <p>ただし、下記のコードは「C:\gs_temp」下の「input.pdf」ファイルを「compressed_target.pdf」に変換・圧縮している</p>
+    <div style="position:relative; margin:20px 0;">
+
+    <button onclick="copyCode(this)" style="
+      position:absolute;
+      top:5px;
+      right:5px;
+      padding:5px 10px;
+      font-size:12px;
+      border:1px solid #ccc;
+      border-radius:5px;
+      background:#f0f0f0;
+      cursor:pointer;
+      ">このコードをコピー
+    </button>
+
+      <pre style="
+        background:#f5f5f5;
+        padding:30px 0px 0px 0px;
+        border-radius:10px;
+        font-size:14px;
+        overflow:auto;
+        ">
+        <code>
+          & "C:\Program Files\gs\gs10.06.0\bin\gswin64c.exe" --% -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dJPEGQ=90 -dDownsampleColorImages=true -dColorImageResolution=350 -dNOPAUSE -dBATCH -sOutputFile=C:\gs_temp\compressed_target.pdf C:\gs_temp\input.pdf
+        </code>  
+      </pre>
+    </div>
+    <script>
+      function copyCode(button){
+        const pre = button.nextElementSibling;
+        const code = pre.innerText;
+        navigator.clipboard.writeText(code);
+
+        button.innerText = "コピーしました！";
+        setTimeout(() => button.innerText = "コピー",2000);
+      }
+    </script>
+    <p>上記コードは、Ghostscriptというソフトウェアを使用しており、プログラム内部に日本語が含まれている場合、正常に動作しない可能性がある。</p>
+    <p>なお、著者の経験から、上記の数値が実用的であると考えているが、「-dPDFSETTINGS」、「-dColorImageResolution」、「-dJPEGQ」には他にも数値の候補がある。</p>
+    <p>上記プログラムでは「-dPDFSETTINGS」を「/prepress」としているが、圧縮率が小さい順に「/prepress」（一番小さい）「/printer」「/ebook」「/screen」がある。</p>
+    <table style="
+      border-collapse:collapse;
+      width:100%;
+      max-width:600px;
+      margin:10px 0;
+    ">
+      <thead>
+          <tr style="background:#f0f0f0;">
+            <th style="border:1px solid #ccc; padding:6px;">設定</th>
+            <th style="border:1px solid #ccc; padding:6px;">意味</th>
+            <th style="border:1px solid #ccc; padding:6px;">圧縮率</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="border:1px solid #ccc; padding:6px;"><b>/prepress</b></td>
+            <td style="border:1px solid #ccc; padding:6px;">高品質印刷向け、ほぼ非圧縮</td>
+            <td style="border:1px solid #ccc; padding:6px;">★（重い）</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #ccc; padding:6px;"><b>/printer</b></td>
+            <td style="border:1px solid #ccc; padding:6px;">印刷向けで適度な圧縮</td>
+            <td style="border:1px solid #ccc; padding:6px;">★★</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #ccc; padding:6px;"><b>/ebook</b></td>
+            <td style="border:1px solid #ccc; padding:6px;">電子書籍向け、高圧縮</td>
+            <td style="border:1px solid #ccc; padding:6px;">★★★</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #ccc; padding:6px;"><b>/screen</b></td>
+            <td style="border:1px solid #ccc; padding:6px;">画面表示向け、超圧縮</td>
+            <td style="border:1px solid #ccc; padding:6px;">★★★★★（最軽量）</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>また、「-dColorImageResolution=350」としているが、他にも下記の表のように候補がある。</p>
+      <table style="
+  border-collapse:collapse;
+  width:100%;
+  max-width:500px;
+  margin:10px 0;
+">
+  <thead>
+    <tr style="background:#f0f0f0;">
+      <th style="border:1px solid #ccc; padding:6px;">dpi</th>
+      <th style="border:1px solid #ccc; padding:6px;">用途</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border:1px solid #ccc; padding:6px;">300</td>
+      <td style="border:1px solid #ccc; padding:6px;">印刷向け（高品質）</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ccc; padding:6px;">150</td>
+      <td style="border:1px solid #ccc; padding:6px;">Web配布向け（軽くなる）</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ccc; padding:6px;">96</td>
+      <td style="border:1px solid #ccc; padding:6px;">画面閲覧のみ（かなり軽くなる）</td>
+    </tr>
+  </tbody>
+  </table>
+  <p>「-dJPEGQ=90（JPEG圧縮率）」も、次のように候補がある。</p>
+  <table style="
+  border-collapse:collapse;
+  width:100%;
+  max-width:500px;
+  margin:10px 0;
+">
+  <thead>
+    <tr style="background:#f0f0f0;">
+      <th style="border:1px solid #ccc; padding:6px;">値</th>
+      <th style="border:1px solid #ccc; padding:6px;">品質</th>
+      <th style="border:1px solid #ccc; padding:6px;">ファイルサイズ</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border:1px solid #ccc; padding:6px;">90</td>
+      <td style="border:1px solid #ccc; padding:6px;">ほぼ劣化なし</td>
+      <td style="border:1px solid #ccc; padding:6px;">重い</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ccc; padding:6px;">70</td>
+      <td style="border:1px solid #ccc; padding:6px;">少し劣化 / だいぶ軽い</td>
+      <td style="border:1px solid #ccc; padding:6px;">軽い</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ccc; padding:6px;">50</td>
+      <td style="border:1px solid #ccc; padding:6px;">かなり圧縮</td>
+      <td style="border:1px solid #ccc; padding:6px;">もっと軽い</td>
+    </tr>
+  </tbody>
+  </table>
   </body>
 </html>
